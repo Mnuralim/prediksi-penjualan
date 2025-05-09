@@ -3,6 +3,8 @@ import { User } from "lucide-react";
 import UpdateAdminForm from "./_components/update-admin-form";
 import { getAdmin } from "@/actions/admin";
 
+export const revalidate = 60 * 60 * 24;
+
 export default async function AdminSettingsPage() {
   const admin = await getAdmin();
   return (

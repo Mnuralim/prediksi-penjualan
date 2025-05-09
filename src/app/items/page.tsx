@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
 import { ItemList } from "./_components/item-list";
 
+export const revalidate = 60 * 60 * 24;
+
 export const metadata = {
   title: "Sistem Prediksi Penjualan - Daftar Barang",
   description: "Kelola barang Anda dengan mudah",
