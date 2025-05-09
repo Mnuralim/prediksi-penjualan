@@ -1,0 +1,128 @@
+{
+  "sales": [
+    {
+      "id": "11fefda0-2593-4a7c-a697-3911669f94d3",
+      "itemId": "9af46bf3-1ecf-481e-ba37-f85dda0c2feb",
+      "week": 1,
+      "quantity": 89
+    },
+    {
+      "id": "b3e37180-9e47-42d6-a346-6279d68c75d3",
+      "itemId": "9af46bf3-1ecf-481e-ba37-f85dda0c2feb",
+      "week": 2,
+      "quantity": 95
+    },
+    {
+      "id": "4f75f5e1-23cc-43ca-af2d-f74007bf17c9",
+      "itemId": "9af46bf3-1ecf-481e-ba37-f85dda0c2feb",
+      "week": 3,
+      "quantity": 85
+    },
+    {
+      "id": "bf545508-662c-4038-a6e5-6bd00808e93f",
+      "itemId": "9af46bf3-1ecf-481e-ba37-f85dda0c2feb",
+      "week": 4,
+      "quantity": 75
+    },
+    {
+      "id": "3d2041c7-7d97-4066-9176-75e423622b30",
+      "itemId": "9af46bf3-1ecf-481e-ba37-f85dda0c2feb",
+      "week": 5,
+      "quantity": 86
+    },
+    {
+      "id": "96263261-ac6a-41f6-9e0d-a487d65ebed0",
+      "itemId": "9af46bf3-1ecf-481e-ba37-f85dda0c2feb",
+      "week": 6,
+      "quantity": 100
+    },
+    {
+      "id": "e113f6b2-5506-463d-96f3-9be8ba1b3e99",
+      "itemId": "9af46bf3-1ecf-481e-ba37-f85dda0c2feb",
+      "week": 7,
+      "quantity": 120
+    },
+    {
+      "id": "535a6bef-e562-4626-bb2e-4a506ed0daed",
+      "itemId": "9af46bf3-1ecf-481e-ba37-f85dda0c2feb",
+      "week": 8,
+      "quantity": 95
+    },
+    {
+      "id": "6bacf581-e926-47a0-8f4a-8bbcccfcf163",
+      "itemId": "9af46bf3-1ecf-481e-ba37-f85dda0c2feb",
+      "week": 9,
+      "quantity": 80
+    },
+    {
+      "id": "a458f0b6-bcc7-4502-beb2-c927782b86e0",
+      "itemId": "9af46bf3-1ecf-481e-ba37-f85dda0c2feb",
+      "week": 10,
+      "quantity": 92
+    },
+    {
+      "id": "3bc821af-1b3d-484d-9f9f-64f40ef48938",
+      "itemId": "9af46bf3-1ecf-481e-ba37-f85dda0c2feb",
+      "week": 11,
+      "quantity": 92
+    },
+    {
+      "id": "26b488a8-5477-48bc-b10b-e95a720bd780",
+      "itemId": "9af46bf3-1ecf-481e-ba37-f85dda0c2feb",
+      "week": 12,
+      "quantity": 88
+    },
+    {
+      "id": "559c3c03-496a-4e96-8e7f-02ba3e1a3b87",
+      "itemId": "dbbd055e-01b2-45c4-bddb-7179ea2e6d05",
+      "week": 1,
+      "quantity": 20
+    },
+    {
+      "id": "7f828511-250a-43c6-8402-a10dd95cdb3d",
+      "itemId": "dbbd055e-01b2-45c4-bddb-7179ea2e6d05",
+      "week": 2,
+      "quantity": 20
+    },
+    {
+      "id": "2208ec36-b9cf-4651-b245-98aca6a9dfa1",
+      "itemId": "9af46bf3-1ecf-481e-ba37-f85dda0c2feb",
+      "week": 13,
+      "quantity": 90
+    }
+  ],
+  "items": [
+    {
+      "id": "0caf8d45-003b-4c69-a395-eeb57a6d7b2b",
+      "name": "test update",
+      "photo": "https://ik.imagekit.io/ctvvdwhk0/sales-prediction/items/test_update-1746184768281_ky1IA2ZwA",
+      "stock": 12,
+      "price": 10000,
+      "category": "makanan"
+    },
+    {
+      "id": "6f726509-8844-402b-ae33-3bbb9b6e5671",
+      "name": "AAA",
+      "photo": "https://ik.imagekit.io/ctvvdwhk0/sales-prediction/items/AAA-1746185456566_SaIwzh6Rz",
+      "stock": 11,
+      "price": 19000,
+      "category": "makanan"
+    },
+    {
+      "id": "9af46bf3-1ecf-481e-ba37-f85dda0c2feb",
+      "name": "Royco",
+      "photo": "https://ik.imagekit.io/ctvvdwhk0/sales-prediction/items/Royco-1746185978708_Recvm7az7",
+      "stock": 11,
+      "price": 2000,
+      "category": "makanan"
+    },
+    {
+      "id": "dbbd055e-01b2-45c4-bddb-7179ea2e6d05",
+      "name": "besi",
+      "photo": "https://ik.imagekit.io/ctvvdwhk0/sales-prediction/items/besi-1746448076493_sIXISH-fJ",
+      "stock": 10,
+      "price": 12000,
+      "category": "lainnya"
+    }
+  ]
+}
