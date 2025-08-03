@@ -3,8 +3,6 @@ import { Calendar } from "lucide-react";
 import { Dashboard } from "./_components/dashboard";
 import { dashboardStats } from "@/actions/stats";
 
-export const revalidate = 60 * 60 * 24;
-
 export default async function DashboardPage() {
   const {
     itemChange,

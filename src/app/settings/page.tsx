@@ -2,11 +2,11 @@ import React from "react";
 import { User } from "lucide-react";
 import UpdateAdminForm from "./_components/update-admin-form";
 import { getAdmin } from "@/actions/admin";
-
-export const revalidate = 60 * 60 * 24;
+import { getSession } from "@/actions/session";
 
 export default async function AdminSettingsPage() {
-  const admin = await getAdmin();
+  const session = await getSession();
+  const admin = await getAdmin(session?.userId as string);
   return (
     <div className="bg-gray-50 dark:bg-gray-900">
       <main className=" mx-auto px-4 sm:px-6 lg:px-8 py-8">
