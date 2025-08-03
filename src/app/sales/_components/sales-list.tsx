@@ -21,9 +21,10 @@ type Sale = Prisma.SaleGetPayload<{
 interface Props {
   sales: Sale[];
   items: Item[];
+  role?: "ADMIN" | "OWNER" | "CASHIER";
 }
 
-export const SalesList = ({ sales, items }: Props) => {
+export const SalesList = ({ sales, items, role }: Props) => {
   const [showModal, setShowModal] = useState(false);
   const [currentItem, setCurrentItem] = useState<Sale | null>(null);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
@@ -88,30 +89,31 @@ export const SalesList = ({ sales, items }: Props) => {
       header: "Aksi",
       accessor: () => null,
       className: "w-24",
-      render: (item) => (
-        <div className="flex space-x-1">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleEditItem(item);
-            }}
-            className="p-1.5 text-amber-600 rounded-md hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-900/20"
-            title="Edit"
-          >
-            <Edit className="w-4 h-4" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDeleteSales(item);
-            }}
-            className="p-1.5 text-red-600 rounded-md hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
-            title="Hapus"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
-      ),
+      render: (item) =>
+        role === "OWNER" ? null : (
+          <div className="flex space-x-1">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditItem(item);
+              }}
+              className="p-1.5 text-amber-600 rounded-md hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-900/20"
+              title="Edit"
+            >
+              <Edit className="w-4 h-4" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteSales(item);
+              }}
+              className="p-1.5 text-red-600 rounded-md hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+              title="Hapus"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        ),
     },
   ];
 
@@ -162,7 +164,11 @@ export const SalesList = ({ sales, items }: Props) => {
           </p>
         </div>
       </div>
-      <ActionButtons handleAddItem={handleAddItem} title="Tambah Penjualan" />
+      <ActionButtons
+        role={role}
+        handleAddItem={handleAddItem}
+        title="Tambah Penjualan"
+      />
       <Table
         data={sales}
         columns={columns}

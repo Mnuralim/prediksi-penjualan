@@ -10,7 +10,7 @@ import {
   Package,
   ShoppingCart,
   BarChart,
-  FileBarChart,
+  // FileBarChart,
   LogOut,
   User,
 } from "lucide-react";
@@ -21,9 +21,10 @@ interface SidebarProps {
   className?: string;
   name?: string;
   email?: string;
+  role?: "ADMIN" | "OWNER" | "CASHIER";
 }
 
-export function Sidebar({ className = "", email, name }: SidebarProps) {
+export function Sidebar({ className = "", email, name, role }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathName = usePathname();
   const [isMounted, setIsMounted] = useState(false);
@@ -97,10 +98,15 @@ export function Sidebar({ className = "", email, name }: SidebarProps) {
       icon: <BarChart className="w-5 h-5" />,
       href: "/predict",
     },
+    // {
+    //   name: "Laporan",
+    //   icon: <FileBarChart className="w-5 h-5" />,
+    //   href: "/report",
+    // },
     {
-      name: "Laporan",
-      icon: <FileBarChart className="w-5 h-5" />,
-      href: "/report",
+      name: "Pengguna",
+      icon: <User className="w-5 h-5" />,
+      href: "/users",
     },
     {
       name: "Pengaturan",
@@ -179,8 +185,9 @@ export function Sidebar({ className = "", email, name }: SidebarProps) {
             <ul className="space-y-1 px-3">
               {menuItems.map((item, index) => {
                 const isActive = pathName === item.href;
+                const isHidden = item.href === "/users" && role !== "ADMIN";
                 return (
-                  <li key={index}>
+                  <li key={index} hidden={isHidden}>
                     <Link
                       href={item.href}
                       className={`flex items-center px-4 py-2.5 text-sm rounded-lg transition-colors ${

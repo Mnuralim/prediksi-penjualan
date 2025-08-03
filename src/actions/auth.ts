@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { compare } from "bcryptjs";
 import { createSession, deleteSession } from "./session";
+import { redirect } from "next/navigation";
 
 interface AuthState {
   error: string | null;
@@ -32,10 +33,11 @@ export async function login(
     return { error: "Password salah" };
   }
 
-  await createSession(admin.id.toString());
+  await createSession(admin.id.toString(), admin.email, admin.role, admin.name);
   return { error: null };
 }
 
 export async function logout() {
   await deleteSession();
+  redirect("/login");
 }

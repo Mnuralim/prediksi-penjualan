@@ -2,9 +2,10 @@
 
 import { imagekit } from "@/lib/imagekit";
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, unstable_cache } from "next/cache";
 import { redirect } from "next/navigation";
-import { verifySession } from "./session";
+import { getSession } from "./session";
+import type { Item } from "@prisma/client";
 
 interface ItemState {
   error: string | null;
@@ -20,6 +21,18 @@ export async function createItem(
   const price = formData.get("price") as string;
   const category = formData.get("category") as string;
 
+  if (!name || !image || !stock || !price || !category) {
+    return { error: "Data tidak lengkap" };
+  }
+
+  const session = await getSession();
+
+  if (session?.role === "OWNER") {
+    return {
+      error: "Anda tidak memiliki akses untuk membuat item",
+    };
+  }
+
   let photoUrl = null;
 
   if (image && image.size > 0) {
@@ -33,8 +46,6 @@ export async function createItem(
     photoUrl = uploadFile.url;
   }
 
-  const session = await verifySession();
-
   await prisma.item.create({
     data: {
       name,
@@ -42,11 +53,12 @@ export async function createItem(
       stock: parseInt(stock),
       price: parseFloat(price),
       category,
-      adminId: session.userId as string,
+      adminId: session?.userId as string,
     },
   });
 
   revalidatePath("/items");
+  revalidatePath("/sales");
   redirect("/items");
 }
 
@@ -60,6 +72,14 @@ export async function updateItem(
   const stock = formData.get("stock") as string;
   const price = formData.get("price") as string;
   const category = formData.get("category") as string;
+
+  const session = await getSession();
+
+  if (session?.role === "OWNER") {
+    return {
+      error: "Anda tidak memiliki akses untuk mengubah item",
+    };
+  }
 
   const currentItem = await prisma.item.findUnique({
     where: { id },
@@ -92,16 +112,25 @@ export async function updateItem(
     },
   });
 
+  revalidatePath("/sales");
   revalidatePath("/items");
   redirect("/items");
 }
 
 export async function deleteItem(id: string) {
+  const session = await getSession();
+
+  if (session?.role === "OWNER") {
+    return {
+      error: "Anda tidak memiliki akses untuk menghapus item",
+    };
+  }
   await prisma.item.delete({
     where: {
       id: id,
     },
   });
+  revalidatePath("/sales");
   revalidatePath("/items");
   redirect("/items");
 }
@@ -114,3 +143,9 @@ export async function getItemName(itemId: string): Promise<string> {
 
   return item?.name || "Unknown Item";
 }
+
+export const getItems = unstable_cache(async function getItems(): Promise<
+  Item[]
+> {
+  return prisma.item.findMany();
+});

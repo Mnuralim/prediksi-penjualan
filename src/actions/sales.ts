@@ -3,7 +3,8 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { verifySession } from "./session";
+import { getSession } from "./session";
+import type { Prisma } from "@prisma/client";
 
 interface SaleState {
   error: string | null;
@@ -16,6 +17,18 @@ export async function createSales(
   const itemId = formData.get("item-id") as string;
   const week = formData.get("week") as string;
   const totalSales = formData.get("total-sales") as string;
+
+  if (!itemId || !week || !totalSales) {
+    return { error: "Data tidak lengkap" };
+  }
+
+  const session = await getSession();
+
+  if (session?.role === "OWNER") {
+    return {
+      error: "Anda tidak memiliki akses untuk membuat sales",
+    };
+  }
 
   const existing = await prisma.sale.findFirst({
     where: {
@@ -30,14 +43,12 @@ export async function createSales(
     };
   }
 
-  const session = await verifySession();
-
   await prisma.sale.create({
     data: {
       itemId,
       week: parseInt(week),
       quantity: parseInt(totalSales),
-      adminId: session.userId as string,
+      adminId: session?.userId as string,
     },
   });
 
@@ -53,6 +64,18 @@ export async function updateSales(
   const week = formData.get("week") as string;
   const totalSales = formData.get("total-sales") as string;
   const id = formData.get("id") as string;
+
+  if (!itemId || !week || !totalSales || !id) {
+    return { error: "Data tidak lengkap" };
+  }
+
+  const session = await getSession();
+
+  if (session?.role === "OWNER") {
+    return {
+      error: "Anda tidak memiliki akses untuk mengubah penjualan",
+    };
+  }
 
   const currentSale = await prisma.sale.findUnique({
     where: { id },
@@ -93,6 +116,13 @@ export async function updateSales(
 }
 
 export async function deleteSales(id: string) {
+  const session = await getSession();
+
+  if (session?.role === "OWNER") {
+    return {
+      error: "Anda tidak memiliki akses untuk menghapus data penjualan",
+    };
+  }
   await prisma.sale.delete({
     where: {
       id,
@@ -101,4 +131,18 @@ export async function deleteSales(id: string) {
 
   revalidatePath("/sales");
   redirect("/sales");
+}
+
+export async function getSales(): Promise<
+  Prisma.SaleGetPayload<{
+    include: {
+      item: true;
+    };
+  }>[]
+> {
+  return prisma.sale.findMany({
+    include: {
+      item: true,
+    },
+  });
 }

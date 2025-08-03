@@ -1,7 +1,6 @@
 "use server";
 import "server-only";
 import { cache } from "react";
-import { verifySession } from "./session";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { hash } from "bcryptjs";
@@ -10,17 +9,15 @@ interface AdminState {
   error: string | null;
 }
 
-export const getAdmin = cache(async () => {
-  const session = await verifySession();
-  if (!session) return null;
-
+export const getAdmin = cache(async (id: string) => {
   try {
     const data = await prisma.admin.findUnique({
-      where: { id: session.userId as string },
+      where: { id },
       select: {
         id: true,
         name: true,
         email: true,
+        role: true,
       },
     });
 
@@ -35,14 +32,18 @@ export const updateAdmin = async (
   prevState: AdminState,
   formData: FormData
 ): Promise<AdminState> => {
-  const admin = await getAdmin();
+  const name = formData.get("name")?.toString();
+  const email = formData.get("email")?.toString();
+  const id = formData.get("id")?.toString();
+  const password = formData.get("password")?.toString();
+
+  if (!name || !email || !id) {
+    return { error: "Data tidak lengkap" };
+  }
+  const admin = await getAdmin(id);
   if (!admin) {
     return { error: "Admin tidak ditemukan" };
   }
-
-  const name = formData.get("name")?.toString();
-  const email = formData.get("email")?.toString();
-  const password = formData.get("password")?.toString();
 
   if (password) {
     const hashPassword = await hash(password, 10);

@@ -1,6 +1,7 @@
 "use server";
 import prisma from "@/lib/prisma";
 import { getItemName } from "./item";
+import { redirect } from "next/navigation";
 
 export async function calculateSingleMovingAverage(
   itemId: string,
@@ -57,7 +58,6 @@ export async function calculateSingleMovingAverage(
         sum += weeklySales[i - j].quantity;
       }
       result.forecast = sum / period;
-
       result.error = result.actual - result.forecast;
       result.absoluteError = Math.abs(result.error);
       result.errorSquared = Math.pow(result.error, 2);
@@ -71,24 +71,14 @@ export async function calculateSingleMovingAverage(
         result.absolutePercentageError = null;
       }
     }
-
     results.push(result);
   }
 
-  let sumAbsError = 0;
-  let sumError = 0;
-  let sumSquaredError = 0;
   let sumAbsPercentageError = 0;
-  let countWithForecast = 0;
   let countValidMAPE = 0;
 
   for (const result of results) {
     if (result.forecast !== null) {
-      sumAbsError += result.absoluteError!;
-      sumError += result.error!;
-      sumSquaredError += result.errorSquared!;
-      countWithForecast++;
-
       if (result.absolutePercentageError !== null) {
         sumAbsPercentageError += result.absolutePercentageError;
         countValidMAPE++;
@@ -120,15 +110,8 @@ export async function calculateSingleMovingAverage(
   };
 
   const errorMetrics = {
-    MAD: countWithForecast > 0 ? sumAbsError / countWithForecast : 0,
-    MSE: countWithForecast > 0 ? sumSquaredError / countWithForecast : 0,
-    RMSE:
-      countWithForecast > 0
-        ? Math.sqrt(sumSquaredError / countWithForecast)
-        : 0,
     MAPE:
       countValidMAPE > 0 ? (sumAbsPercentageError / countValidMAPE) * 100 : 0,
-    bias: countWithForecast > 0 ? sumError / countWithForecast : 0,
   };
 
   const itemName = await getItemName(itemId);
@@ -140,4 +123,52 @@ export async function calculateSingleMovingAverage(
     nextForecast: forecasting,
     errorMetrics: errorMetrics,
   };
+}
+
+export async function calculateAllItemsMovingAverage(
+  period: number = 3
+): Promise<CalculateResult[]> {
+  const items = await prisma.item.findMany({
+    select: {
+      id: true,
+    },
+  });
+
+  const results: CalculateResult[] = [];
+
+  for (const item of items) {
+    try {
+      const smaResult = await calculateSingleMovingAverage(item.id, period);
+
+      if (smaResult.data.length > period) {
+        const hasValidForecast = smaResult.data.some(
+          (result) => result.forecast !== null
+        );
+        if (hasValidForecast) {
+          results.push(smaResult);
+        }
+      }
+    } catch (error) {
+      console.error(`Error calculating SMA for item ${item.id}:`, error);
+    }
+  }
+
+  results.sort((a, b) => a.itemName.localeCompare(b.itemName));
+
+  return results;
+}
+
+interface PredictState {
+  error: string | null;
+}
+
+export async function predictSMA(
+  prevState: PredictState,
+  formData: FormData
+): Promise<PredictState> {
+  const period = formData.get("period") as string;
+  if (!period) {
+    return { error: "Data tidak lengkap" };
+  }
+  redirect(`/predict?period=${period}&all=true`);
 }

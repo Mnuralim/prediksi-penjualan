@@ -6,6 +6,7 @@ import { Navbar } from "./_components/navbar";
 import { getAdmin } from "@/actions/admin";
 import { headers } from "next/headers";
 import { ThemeProvider } from "./_components/theme-provider";
+import { getSession } from "@/actions/session";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,9 +33,11 @@ export default async function RootLayout({
     (await headersList).get("x-pathname") || (await headersList).get("x-url");
   const isLoginPage = path?.includes("/login");
 
+  const session = await getSession();
+
   let admin = null;
   if (!isLoginPage) {
-    admin = await getAdmin();
+    admin = await getAdmin(session?.userId as string);
   }
 
   return (
@@ -45,7 +48,11 @@ export default async function RootLayout({
         <ThemeProvider>
           <div className="min-h-screen flex flex-col">
             {!isLoginPage && (
-              <Sidebar email={admin?.email} name={admin?.name} />
+              <Sidebar
+                email={admin?.email}
+                name={admin?.name}
+                role={admin?.role}
+              />
             )}
             <div
               className={`min-h-screen flex-1 flex flex-col transition-all duration-300 ${

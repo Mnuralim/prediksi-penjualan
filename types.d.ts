@@ -20,15 +20,14 @@ interface CalculateResult {
   data: SMAResult[];
   nextForecast: SMAResult;
   errorMetrics: {
-    MAD: number;
-    MSE: number;
-    RMSE: number;
     MAPE: number;
-    bias: number;
   };
 }
 
 interface SessionPayload {
-  userId: string | number;
+  userId: string;
+  email: string;
+  name?: string;
+  role: "ADMIN" | "OWNER" | "CASHIER";
   expiresAt: Date;
 }
